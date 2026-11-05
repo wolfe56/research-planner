@@ -1,4 +1,4 @@
-import { parseStart } from './util.js';
+import { parseStart, downloadFile } from './util.js';
 
 // Export a single scheduled task to an outside calendar. `ev` is a task plus projectName / experimentName.
 
@@ -51,12 +51,6 @@ export function downloadIcs(ev) {
     `DESCRIPTION:${esc(details(ev))}`,
     'END:VEVENT', 'END:VCALENDAR',
   ];
-  const blob = new Blob([lines.map(fold).join('\r\n') + '\r\n'], { type: 'text/calendar;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = (ev.title.replace(/[^\w\- ]+/g, '').trim().slice(0, 40) || 'task') + '.ics';
-  document.body.append(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  const name = (ev.title.replace(/[^\w\- ]+/g, '').trim().slice(0, 40) || 'task') + '.ics';
+  downloadFile(name, lines.map(fold).join('\r\n') + '\r\n', 'text/calendar;charset=utf-8');
 }

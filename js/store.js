@@ -3,8 +3,10 @@ import { newId } from './util.js';
 import { demoSeed } from './demo.js';
 
 const SDK = 'https://www.gstatic.com/firebasejs/10.14.1';
-export const COLLS = ['projects', 'experiments', 'tasks', 'reagents', 'milestones'];
-export const DEMO = !firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith('PASTE');
+// 'experiments' holds what the UI calls goals; the collection name is kept so existing data still loads.
+export const COLLS = ['projects', 'experiments', 'tasks', 'reagents', 'samples', 'milestones'];
+// Demo mode keeps example data in this browser only. Adding ?demo to the address forces it, for trying changes safely.
+export const DEMO = !firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith('PASTE') || new URLSearchParams(location.search).has('demo');
 
 let fb = null;
 
@@ -86,6 +88,7 @@ function openDemo(onData) {
   let state = null;
   try { state = JSON.parse(localStorage.getItem(DEMO_KEY)); } catch {}
   if (!state) state = demoSeed();
+  for (const c of COLLS) state[c] ||= [];
   const emit = () => {
     try { localStorage.setItem(DEMO_KEY, JSON.stringify(state)); } catch {}
     onData({ ...state });

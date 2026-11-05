@@ -1,8 +1,8 @@
 # Research Planner
 
-A private planner for research projects: **Project → Experiment → Task**, colour-coded by project, with tasks shown as
-time blocks on a calendar you can drag around, a reagent order list, and one-task-at-a-time export to Google Calendar,
-Outlook or an `.ics` file.
+A private planner for research projects: **Project → Goal → Experiments and tasks**, colour-coded by project, with
+items shown as time blocks on a calendar you can drag around, a materials list (reagents, equipment, samples), and
+one-item-at-a-time export to Google Calendar, Outlook or an `.ics` file.
 
 It is a plain static website (HTML + JavaScript, no build step). Login and data storage use Firebase; the site itself is
 hosted on GitHub Pages. Data syncs between your computer and phone and stays readable offline.
@@ -10,6 +10,8 @@ hosted on GitHub Pages. Data syncs between your computer and phone and stays rea
 ## Try it locally first (demo mode)
 
 Until `js/firebase-config.js` is filled in, the site runs in **demo mode**: example data, saved only in that browser.
+Adding `?demo` to the address (e.g. `http://localhost:8000/?demo`) forces demo mode even with Firebase set up, so
+changes can be tried without touching real data.
 
 ```
 cd research-planner
@@ -57,16 +59,25 @@ account creation there once your own account exists.
 
 ## Using it
 
-- **Plan**: projects on the left. Each project has milestones (fixed dates such as DARPA deadlines), project tasks, and
-  experiments. Each experiment has tasks and reagents. Drag a task by its ⠿ handle to reorder it or move it to another experiment.
-- **Calendar**: unscheduled tasks wait in the side tray. Drag them onto the week; the block height matches the task's duration.
-  Drag a block to move it, drag its bottom edge to change the duration, or drag it back to the tray to unschedule it.
+- **Plan**: projects on the left (drag ⠿ to reorder). Each project has milestones (fixed dates such as DARPA deadlines),
+  project tasks, and goals (e.g. "Get data for the permutants"). Inside a goal are **experiments** (flask icon) and
+  **tasks** (non-experimental work), each with a duration. An experiment has its own reagents, equipment and samples;
+  a goal can also hold materials shared by all its items. Drag an item by ⠿ to reorder it, move it to another goal, or drop
+  it on another project. Drag a goal by its ⠿ to reorder goals. The **!** button marks an item high priority.
+- **Calendar**: the tray holds *Missed* items (scheduled on an earlier day but not ticked off), *Quick tasks* (30 min or
+  less), then each project's unscheduled items, high priority first. Drag items onto the calendar; the block height matches
+  the duration. Drag a block to move it, drag its bottom edge to change the duration, or drag it back to the tray. Switch
+  between Day, 3 days and Week, or click a day's date to open it. Rescheduling a missed item adds to its "slipped" count.
   On a phone, drag with the ⠿ handle; tapping a block opens it.
-- **Reagents**: everything marked *Need to order*, *Ordered* or *Arrived* across all projects. Tasks in an experiment show
-  "waiting on reagents" until all of that experiment's reagents have arrived. *Copy order list* puts the to-order list on your clipboard.
-- **Export to a calendar**: open a scheduled task and choose Google Calendar, Outlook (your Northeastern Microsoft 365 account), or
-  Download .ics. Only that task is exported. If you move the task afterwards, the editor reminds you that the calendar copy is out of date.
+- **Materials**: reagents and equipment to order, and samples to produce or order, across all projects. An experiment
+  shows "waiting" until its materials (and its goal's shared materials) are ready. *Copy order list* copies what to order.
+- **Milestones**: link an item to a milestone in its editor ("Counts toward milestone"). The milestone then shows how many
+  linked items are unscheduled or scheduled after its date.
+- **Export to a calendar**: open a scheduled item and choose Google Calendar, Outlook (your Northeastern Microsoft 365
+  account), or Download .ics. If you move it afterwards, the editor reminds you that the calendar copy is out of date.
+- **Backup**: the Backup button downloads all your planner data as a JSON file.
 
 ## Updating the site
 
-Edit the files and upload them to the repository again; GitHub Pages republishes within a minute or two.
+Edit the files and push (or upload) them to the repository again; GitHub Pages republishes within a minute or two.
+Browsers may keep the old files for a few minutes; a hard refresh (Ctrl+Shift+R) loads the new version.

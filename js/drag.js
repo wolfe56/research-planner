@@ -1,6 +1,6 @@
 // Pointer-based drag and drop, so dragging works the same with a mouse and on a touchscreen.
 // Drop targets are elements with a data-drop attribute. `resolve(target, point)` turns the target
-// under the pointer into a drop ({ label, cls?, box? }), or null where dropping isn't allowed.
+// under the pointer into a drop ({ label, cls?, box?, el? }), or null where dropping isn't allowed.
 // A `box` snaps the ghost to that viewport rectangle (used for calendar slots).
 
 let lastEnd = 0;
@@ -46,10 +46,12 @@ export function startDrag(e, { label, color, height = 0, grabY = 12, resolve, on
     const el = document.elementFromPoint(pt.x, pt.y);
     const t = el ? el.closest('[data-drop]') : null;
     drop = t ? resolve(t, pt) : null;
+    // A drop may highlight a different element than the one under the pointer (e.g. a whole goal card).
+    const hl = (drop && drop.el) || t;
     const nextCls = drop ? drop.cls || 'drop-over' : '';
     if (target && cls) target.classList.remove(cls);
-    if (t && nextCls) t.classList.add(nextCls);
-    target = t;
+    if (hl && nextCls) hl.classList.add(nextCls);
+    target = hl;
     cls = nextCls;
     const b = drop && drop.box;
     ghost.classList.toggle('snapped', !!b);

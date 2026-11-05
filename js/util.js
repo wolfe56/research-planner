@@ -42,5 +42,30 @@ export const ROLES = [['lead', 'Lead'], ['subpi', 'Sub-PI'], ['support', 'Suppor
 export const roleLabel = r => (ROLES.find(x => x[0] === r) || ROLES[0])[1];
 export const DURATIONS = [15, 30, 45, 60, 90, 120, 180, 240, 360, 480];
 export const REAGENT_STATUS = { need: 'Need to order', ordered: 'Ordered', arrived: 'Arrived', have: 'In stock' };
-// Reagents in these states keep their experiment waiting.
+export const REAGENT_KINDS = { reagent: 'Reagent', equipment: 'Equipment' };
+export const SAMPLE_STATUS = { available: 'Available', need_produce: 'Need to produce', need_order: 'Need to order', ordered: 'Ordered' };
+// Reagents, equipment and samples in these states keep their experiment waiting.
 export const isPending = r => r.status === 'need' || r.status === 'ordered';
+export const isSamplePending = s => s.status === 'need_produce' || s.status === 'need_order' || s.status === 'ordered';
+
+export const QUICK_MAX = 30; // minutes; shorter tasks go in the calendar's Quick tasks group
+// A scheduled task from an earlier day that was never ticked off.
+export const isMissed = (t, today) => !t.done && !!t.start && t.start.slice(0, 10) < today;
+
+// Order value that puts an item just before beforeId in an already sorted list, or at the end.
+export function orderAt(list, beforeId) {
+  const i = beforeId ? list.findIndex(x => x.id === beforeId) : -1;
+  const o = k => list[k].order ?? 0;
+  if (i < 0) return list.length ? o(list.length - 1) + 1 : 0;
+  return i === 0 ? o(0) - 1 : (o(i - 1) + o(i)) / 2;
+}
+
+export function downloadFile(filename, text, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type }));
+  a.download = filename;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
